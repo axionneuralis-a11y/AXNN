@@ -129,7 +129,7 @@ Distributed under the MIT License. See LICENSE for more information.
 
 📞 Kontak
 
-· Project Maintainer: [Your Name]
+· Project Maintainer: [azriel]
 · Email: your.email@example.com
 · Project Link: https://github.com/yourusername/AXNN
 

@@ -130,7 +130,7 @@ Distributed under the MIT License. See LICENSE for more information.
 📞 Kontak
 
 · Project Maintainer: [azriel]
-· Email: your.email@example.com
+· Email: axionneuralis@gmail.com
 · Project Link: https://github.com/axionneuralis-a11y/AXNN
 
 🙏 Acknowledgments

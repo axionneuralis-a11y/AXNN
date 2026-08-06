@@ -50,7 +50,7 @@ AXNN/
 
 1. Clone repository:
 ```bash
-git clone https://github.com/yourusername/AXNN.git
+git clone https://github.com/axionneuralis-a11y/AXNN.git
 cd AXNN
 ```
 
@@ -131,7 +131,7 @@ Distributed under the MIT License. See LICENSE for more information.
 
 · Project Maintainer: [azriel]
 · Email: your.email@example.com
-· Project Link: https://github.com/yourusername/AXNN
+· Project Link: https://github.com/axionneuralis-a11y/AXNN
 
 🙏 Acknowledgments
 

@@ -1,1 +1,10 @@
-halo
+<CalculatorScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title: "Calc"
+            right_action_items: [['console', lambda x: root.open_editor()]]
+        MDLabel:
+            text: root.display
+            halign: 'right'
+            font_style: "H4" 

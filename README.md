@@ -1,117 +1,146 @@
+README.md
 
-folder & files structure:
+```markdown
+# AXNN - All-in-One Productivity Suite
+
+![AXNN Logo](assets/icon.png)
+
+AXNN adalah aplikasi produktivitas all-in-one yang dirancang untuk membantu Anda mengelola catatan, tugas, folder, kalkulator, dan banyak lagi dalam satu platform terintegrasi. Dibangun dengan Kivy framework untuk mendukung multi-platform (Android, iOS, Windows, macOS, Linux).
+
+## ✨ Fitur Utama
+
+- 📝 **Notes Management** - Buat, edit, dan kelola catatan dengan rich text
+- ✅ **To-Do Lists** - Manajemen tugas dengan prioritas dan deadline
+- 📁 **Folder System** - Organisasi konten dengan sistem folder hierarkis
+- 🧮 **Calculator** - Kalkulator cerdas dengan riwayat perhitungan
+- 📅 **Calendar** - Kalender terintegrasi untuk manajemen jadwal
+- 🔔 **Notifications** - Sistem notifikasi dan pengingat
+- 💾 **Backup & Restore** - Backup dan restore data dengan mudah
+- 📤 **Export/Import** - Ekspor dan impor data dalam berbagai format
+- 🎨 **Custom Themes** - Dukungan tema gelap dan terang
+- 📱 **Multi-Platform** - Berjalan di Android, iOS, Windows, macOS, dan Linux
+
+## 🏗️ Struktur Proyek
+
+```
+
 AXNN/
-│
-├── .gitignore
-├── README.md
-├── buildozer.spec
-├── requirements.txt
-├── main.py
-│
-├── models/
-│   ├── __init__.py
-│   ├── note_model.py
-│   ├── todo_model.py
-│   ├── folder_model.py
-│   ├── calculator_model.py
-│   ├── notification_model.py
-│   ├── file_model.py
-│   └── setting_model.py
-│
-├── controllers/
-│   ├── __init__.py
-│   ├── note_controller.py
-│   ├── todo_controller.py
-│   ├── folder_controller.py
-│   ├── calculator_controller.py
-│   ├── notification_controller.py
-│   ├── settings_controller.py
-│   ├── stats_controller.py
-│   └── editor_controller.py
-│
-├── screens/
-│   ├── __init__.py
-│   ├── home_screen.py
-│   ├── notes_screen.py
-│   ├── todos_screen.py
-│   ├── calculator_screen.py
-│   ├── calendar_screen.py
-│   ├── settings_screen.py
-│   ├── folder_screen.py
-│   ├── note_detail_screen.py
-│   ├── todo_detail_screen.py
-│   ├── notification_screen.py
-│   ├── backup_screen.py
-│   └── editor_screen.py
-│
-├── kv_files/
-│   ├── __init__.py
-│   ├── main.kv
-│   ├── home_screen.kv
-│   ├── notes_screen.kv
-│   ├── todos_screen.kv
-│   ├── calculator_screen.kv
-│   ├── calendar_screen.kv
-│   ├── settings_screen.kv
-│   ├── folder_screen.kv
-│   ├── note_detail_screen.kv
-│   ├── todo_detail_screen.kv
-│   ├── notification_screen.kv
-│   ├── backup_screen.kv
-│   ├── editor_screen.kv
-│   └── code_editor.kv
-│
-├── components/
-│   ├── __init__.py
-│   ├── bottom_nav.py
-│   ├── note_card.py
-│   ├── todo_item.py
-│   ├── calendar_widget.py
-│   ├── badge_notification.py
-│   ├── export_dialog.py
-│   ├── create_folder_dialog.py
-│   ├── create_file_dialog.py
-│   ├── search_bar.py
-│   ├── confirmation_dialog.py
-│   └── code_editor.py
-│
-├── utils/
-│   ├── __init__.py
-│   ├── database.py
-│   ├── helpers.py
-│   ├── constants.py
-│   ├── file_picker.py
-│   ├── theme.py
-│   ├── syntax_highlighter.py
-│   ├── autocomplete.py
-│   ├── permissions.py
-│   ├── notification_helper.py
-│   ├── backup_restore.py
-│   └── export_manager.py
-│
-├── assets/
-│   ├── icon.png
-│   └── splash.png
-│
-├── data/
-│   ├── code_templates.json
-│   └── sample_data.json
-│
-├── docs/
-│   ├── PROJECT_BIBLE.md
-│   ├── proposal.md
-│   ├── changelog.md
-│   ├── user_guide.md
-│   ├── developer_guide.md
-│   ├── test_case_checklist.md
-│   ├── bug_tracker.md
-│   └── wireframe_editor.md
-│
-├── notebooks/
-│   └── build_axnn_colab.ipynb
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-│
-└── bin/
+├── main.py                 # Entry point aplikasi
+├── models/                 # Model data
+├── controllers/            # Logic controller
+├── screens/                # Screen classes
+├── kv_files/              # Kivy UI definitions
+├── components/            # Reusable components
+├── utils/                 # Utility functions
+├── assets/                # Static assets
+├── data/                  # Data files
+├── docs/                  # Dokumentasi
+└── bin/                   # Executable binaries
+
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.8 or higher
+- pip (Python package installer)
+
+### Installation
+
+1. Clone repository:
+```bash
+git clone https://github.com/yourusername/AXNN.git
+cd AXNN
+```
+
+2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Run the application:
+
+```bash
+python main.py
+```
+
+Build for Android (APK)
+
+Menggunakan Buildozer:
+
+```bash
+buildozer init
+buildozer android debug deploy run
+```
+
+Build for Desktop
+
+```bash
+pip install pyinstaller
+pyinstaller main.spec
+```
+
+📦 Dependencies
+
+· kivy >= 2.1.0 - GUI Framework
+· kivymd >= 1.1.1 - Material Design Components
+· sqlite3 - Database (built-in)
+· plyer - Platform-specific APIs
+· pillow - Image processing
+· requests - HTTP requests
+· json - Data serialization (built-in)
+
+📚 Documentation
+
+Dokumentasi lengkap tersedia di folder docs/:
+
+· Project Bible - Dokumentasi lengkap proyek
+· Proposal - Proposal awal proyek
+· User Guide - Panduan pengguna
+· Developer Guide - Panduan developer
+· Changelog - Riwayat perubahan
+· Test Cases - Checklist pengujian
+
+🧪 Testing
+
+Untuk menjalankan tes:
+
+```bash
+python -m pytest tests/
+```
+
+🤝 Kontribusi
+
+Kami menyambut kontribusi dari siapa pun! Silakan baca Developer Guide untuk panduan berkontribusi.
+
+Cara Berkontribusi
+
+1. Fork repository
+2. Buat branch fitur baru (git checkout -b feature/AmazingFeature)
+3. Commit perubahan (git commit -m 'Add some AmazingFeature')
+4. Push ke branch (git push origin feature/AmazingFeature)
+5. Buka Pull Request
+
+📝 License
+
+Distributed under the MIT License. See LICENSE for more information.
+
+📞 Kontak
+
+· Project Maintainer: [Your Name]
+· Email: your.email@example.com
+· Project Link: https://github.com/yourusername/AXNN
+
+🙏 Acknowledgments
+
+· Kivy - Framework GUI
+· KivyMD - Material Design
+· Buildozer - Build tool for Android
+
+---
+
+Made with ❤️ by AXNN Team
+
+```

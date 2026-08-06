@@ -88,3 +88,9 @@ class AXNNApp(App):
 if __name__ == '__main__':
     os.environ['KIVY_NO_FILELOG'] = '1'
     AXNNApp().run()
+    
+# Tambahkan import di atas
+from screens.editor_screen import EditorScreen
+
+# Di dalam build(), setelah add_widget SettingsScreen:
+sm.add_widget(EditorScreen(name='editor'))

@@ -1,1 +1,18 @@
-halo
+<SettingsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title: "Settings"
+            right_action_items: [['console', lambda x: root.open_editor()]]
+        ScrollView:
+            MDList:
+                # Pilihan 3 tema (Light / Dark / Green Matrix)
+                OneLineListItem:
+                    text: "Tema: Terang"
+                    on_release: root.change_theme('light')
+                OneLineListItem:
+                    text: "Tema: Gelap"
+                    on_release: root.change_theme('dark')
+                OneLineListItem:
+                    text: "Tema: Green Matrix"
+                    on_release: root.change_theme('matrix') 

@@ -1,15 +1,9 @@
-Saya akan membuatkan README.md dan .gitignore yang disesuaikan dengan 3 dokumen (Roadmap, Blueprint, dan Bible) yang Anda berikan.
-
----
-
-README.md
-
 ```markdown
 # 🌿 AXNN - AXN Note
 
 **All-in-One Productivity Suite** • Native Android • Editor Kode Portabel
 
-[![Version](https://img.shields.io/badge/version-v1.1.0--dev-green.svg)](https://github.com/axnnote/axnn)
+[![Version](https://img.shields.io/badge/version-v1.1.0--dev-green.svg)](https://github.com/axionneuralis-a11y/AXNN)
 [![Platform](https://img.shields.io/badge/platform-Android-green.svg)]()
 [![Python](https://img.shields.io/badge/python-3.11-blue.svg)]()
 [![Kivy](https://img.shields.io/badge/kivy-2.3.0-brightgreen.svg)]()

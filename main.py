@@ -40,3 +40,51 @@ if __name__ == '__main__':
     os.environ['KIVY_NO_FILELOG'] = '1' 
     os.environ['KIVY_NO_CONSOLELOG'] = '0'
     AXNNApp().run() 
+import os
+import logging
+
+os.environ['KIVY_NO_FILELOG'] = '1'  # Hemat memori
+
+from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager
+
+from utils.database import init_db
+from controllers.theme_controller import ThemeController
+from screens.home_screen import HomeScreen
+from screens.notes_screen import NotesScreen
+from screens.todos_screen import TodosScreen
+from screens.calculator_screen import CalculatorScreen
+from screens.calendar_screen import CalendarScreen
+from screens.settings_screen import SettingsScreen
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
+class AXNNApp(App):
+    title = "AXNN"  # WAJIB (Blueprint 5.1)
+    theme_ctrl = ThemeController()
+
+    def build(self):
+        logger.info("Boot AXNN v1.1.0...")
+        init_db()
+
+        # Muat tema tersimpan sebelum render UI
+        self.theme_ctrl.load_saved_theme()
+
+        sm = ScreenManager()
+        sm.add_widget(HomeScreen(name='home'))
+        sm.add_widget(NotesScreen(name='notes'))
+        sm.add_widget(TodosScreen(name='list'))
+        sm.add_widget(CalculatorScreen(name='calc'))
+        sm.add_widget(CalendarScreen(name='calendar'))
+        sm.add_widget(SettingsScreen(name='settings'))
+
+        logger.info("UI siap. Tema aktif: %s", self.theme_ctrl.get_current_theme())
+        return sm
+
+
+if __name__ == '__main__':
+    os.environ['KIVY_NO_FILELOG'] = '1'
+    AXNNApp().run()

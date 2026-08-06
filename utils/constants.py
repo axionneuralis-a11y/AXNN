@@ -1,1 +1,23 @@
-halo
+"""Konstanta global aplikasi AXNN (Bab 17 Security & Bab 10 Design System)."""
+
+# Identitas Aplikasi
+APP_NAME = "AXNN"
+APP_VERSION = "1.1.0"
+PACKAGE_NAME = "org.axnnote.app"
+
+# Batasan Validasi Input (WAJIB DITERAPKAN DI CONTROLLER)
+MAX_NOTE_TITLE_LENGTH = 200
+MAX_NOTE_CONTENT_LENGTH = 10000
+MAX_FOLDER_NAME_LENGTH = 50
+MAX_TODO_TASK_LENGTH = 200
+
+# Tema (Bab 10 Design System)
+THEME_LIGHT = 'light'
+THEME_DARK = 'dark'
+THEME_MATRIX = 'matrix'
+VALID_THEMES = [THEME_LIGHT, THEME_DARK, THEME_MATRIX]
+
+# Default Settings
+DEFAULT_THEME = THEME_LIGHT
+DEFAULT_FOLDER_NAME = "Umum"
+DEFAULT_FOLDER_COLOR = "#2196F3" 

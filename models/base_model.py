@@ -1,98 +1,114 @@
-import sqlite3
-from typing import List, Dict, Optional, Any
-from utils.database import get_db_connection
-import logging
+"""Model dasar yang diwarisi semua model lain (Blueprint 5.7)."""
 
-logger = logging.getLogger(__name__)
+import sqlite3
+from typing import Dict, List, Optional
+
+from utils.database import get_db_connection
+
 
 class BaseModel:
-    """Model dasar yang diwarisi semua model lain (Pola MVC Ketat)."""
-    
-    table_name: str = ""
-    
+    """Base CRUD generik untuk semua entitas AXNN."""
+
+    table_name: str = ""  # WAJIB di-override oleh subclass
+
     @classmethod
-    def insert(cls, data: Dict[str, Any]) -> int:
-        """Insert data baru ke database (Aman dari SQL Injection)."""
-        if not cls.table_name:
-            raise ValueError("table_name belum didefinisikan pada model")
-            
-        columns = ', '.join(data.keys())
-        placeholders = ', '.join(['?' for _ in data])
+    def insert(cls, data: Dict) -> int:
+        """Insert satu baris baru.
+
+        Args:
+            data (Dict): Kolom -> nilai.
+
+        Returns:
+            int: ID baris baru.
+        """
+        columns = ", ".join(data.keys())
+        placeholders = ", ".join(["?" for _ in data])
         query = f"INSERT INTO {cls.table_name} ({columns}) VALUES ({placeholders})"
-        
+
         conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query, list(data.values()))
-            conn.commit()
-            return cursor.lastrowid
-        except sqlite3.Error as e:
-            logger.error(f"Database error pada insert {cls.table_name}: {e}")
-            raise
-        finally:
-            conn.close()
-            
+        cursor = conn.cursor()
+        cursor.execute(query, list(data.values()))
+        conn.commit()
+        last_id = cursor.lastrowid
+        conn.close()
+        return last_id
+
     @classmethod
-    def get_all(cls, limit: Optional[int] = None, order_by: str = "created_at DESC") -> List[Dict[str, Any]]:
-        """Ambil semua data dari tabel."""
-        query = f"SELECT * FROM {cls.table_name} ORDER BY {order_by}"
-        if limit:
-            query += f" LIMIT {limit}"
-            
+    def get_all(cls, limit: Optional[int] = None) -> List[Dict]:
+        """Ambil semua data terurut dari yang terbaru.
+
+        Args:
+            limit (Optional[int]): Batas jumlah baris.
+
+        Returns:
+            List[Dict]: Daftar baris.
+        """
+        query = f"SELECT * FROM {cls.table_name} ORDER BY id DESC"
+        if limit is not None:
+            query += " LIMIT ?"
+
         conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query)
-            return [dict(row) for row in cursor.fetchall()]
-        finally:
-            conn.close()
-            
+        cursor = conn.cursor()
+        cursor.execute(query, (limit,) if limit is not None else ())
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+
     @classmethod
-    def get_by_id(cls, record_id: int) -> Optional[Dict[str, Any]]:
-        """Ambil 1 data berdasarkan ID."""
+    def get_by_id(cls, record_id: int) -> Optional[Dict]:
+        """Ambil satu baris berdasarkan ID.
+
+        Args:
+            record_id (int): ID yang dicari.
+
+        Returns:
+            Optional[Dict]: Baris jika ditemukan, selain itu None.
+        """
         query = f"SELECT * FROM {cls.table_name} WHERE id = ?"
         conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query, (record_id,))
-            row = cursor.fetchone()
-            return dict(row) if row else None
-        finally:
-            conn.close()
-            
+        cursor = conn.cursor()
+        cursor.execute(query, (record_id,))
+        row = cursor.fetchone()
+        conn.close()
+        return dict(row) if row else None
+
     @classmethod
-    def update(cls, record_id: int, data: Dict[str, Any]) -> bool:
-        """Update data berdasarkan ID + otomatis update timestamp."""
-        if not data: return False
-            
-        set_clause = ', '.join([f"{k} = ?" for k in data.keys()])
-        query = f"UPDATE {cls.table_name} SET {set_clause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
-        values = list(data.values()) + [record_id]
-        
+    def update(cls, record_id: int, data: Dict) -> bool:
+        """Update satu baris berdasarkan ID.
+
+        Args:
+            record_id (int): ID yang di-update.
+            data (Dict): Kolom -> nilai baru.
+
+        Returns:
+            bool: True jika ada baris yang terdampak.
+        """
+        set_clause = ", ".join([f"{key} = ?" for key in data])
+        query = f"UPDATE {cls.table_name} SET {set_clause} WHERE id = ?"
+
         conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query, values)
-            conn.commit()
-            return True
-        except sqlite3.Error as e:
-            logger.error(f"Database error pada update {cls.table_name}: {e}")
-            return False
-        finally:
-            conn.close()
-            
+        cursor = conn.cursor()
+        cursor.execute(query, list(data.values()) + [record_id])
+        conn.commit()
+        affected = cursor.rowcount > 0
+        conn.close()
+        return affected
+
     @classmethod
     def delete(cls, record_id: int) -> bool:
-        """Hapus data berdasarkan ID."""
+        """Hapus satu baris berdasarkan ID.
+
+        Args:
+            record_id (int): ID yang dihapus.
+
+        Returns:
+            bool: True jika ada baris yang terhapus.
+        """
         query = f"DELETE FROM {cls.table_name} WHERE id = ?"
         conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query, (record_id,))
-            conn.commit()
-            return True
-        except sqlite3.Error as e:
-            logger.error(f"Database error pada delete {cls.table_name}: {e}")
-            return False
-        finally:
-            conn.close()
+        cursor = conn.cursor()
+        cursor.execute(query, (record_id,))
+        conn.commit()
+        affected = cursor.rowcount > 0
+        conn.close()
+        return affected

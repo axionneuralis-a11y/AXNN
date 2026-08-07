@@ -1,9 +1,16 @@
-<TodosScreen>:
-    BoxLayout:
+<<TodosScreen>:
+    MDBoxLayout:
         orientation: 'vertical'
+        
         MDToolbar:
-            title: "List"
-            right_action_items: [['console', lambda x: root.open_editor()]]
+            title: "Daftar Tugas"
+            right_action_items: [['plus', lambda x: root.show_add_dialog()]]
+            
         ScrollView:
-            MDList:
-                # Render todo items via RecycleView (M2) 
+            MDBoxLayout:
+                id: todo_container
+                orientation: 'vertical'
+                padding: dp(16)
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height

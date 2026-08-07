@@ -1,58 +1,54 @@
-from controllers.base_controller import BaseController
-from models.calculator_model import CalculatorModel
-from utils.helpers import validate_calc_expression
+"""Controller kalkulator dasar + riwayat (F004)."""
 
-class CalculatorController(BaseController):
-    def __init__(self):
-        super().__init__(CalculatorModel)
-        
-    def calculate_and_save(self, expression: str, result: str) -> dict:
-        """F004: Menghitung dan menyimpan ke riwayat."""
-        if not validate_calc_expression(expression):
-            return {"success": False, "error": "Karakter tidak valid! Hanya angka dan +-×÷."}
-            
-        try:
-            self.model.add_history(expression, result)
-            return {"success": True, "data": {"expression": expression, "result": result}}
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-            
-    def clear_history(self) -> dict:
-        try:
-            if self.model.clear_history():
-                return {"success": True, "message": "Riwayat dihapus"}
-            return {"success": False, "error": "Gagal menghapus riwayat"}
-        except Exception as e:
-            return {"success": False, "error": str(e)} 
 import re
 from typing import Dict
-from models.calculator_model import CalculatorModel
+
 from controllers.base_controller import BaseController
+from models.calculator_model import CalculatorModel
+
+ALLOWED_PATTERN: str = r"^[0-9+\-*/.() ]+$"
+SAFE_GLOBALS: Dict = {"__builtins__": {}}
+
 
 class CalculatorController(BaseController):
-    def __init__(self):
+    """Logika operasi dasar +-×÷ dengan riwayat."""
+
+    def __init__(self) -> None:
+        """Ikatkan ke CalculatorModel."""
         super().__init__(CalculatorModel)
 
     def calculate(self, expression: str) -> Dict:
-        """Menghitung operasi dasar +-×÷ dengan aman."""
-        # Sanitasi input: hanya angka, titik, dan operator dasar
-        sanitized = expression.replace('×', '*').replace('÷', '/')
-        
-        if not re.match(r'^[0-9+\-*/.() ]+$', sanitized):
-            return {"success": False, "error": "Input tidak valid!"}
-            
+        """Hitung ekspresi dasar dengan aman.
+
+        Args:
+            expression (str): Ekspresi, mis. "2+3", "10÷2".
+
+        Returns:
+            Dict: Hasil operasi + nilai.
+        """
+        sanitized = expression.replace("×", "*").replace("÷", "/").strip()
+        if not sanitized:
+            return {"success": False, "error": "Ekspresi kosong"}
+        if not re.match(ALLOWED_PATTERN, sanitized):
+            return {"success": False, "error": "Input tidak valid"}
+
         try:
-            # Eval aman untuk operasi dasar (tidak ada exec/eval kompleks)
-            result = eval(sanitized, {"__builtins__": {}}, {})
-            
-            # Simpan ke riwayat
-            self.create({
-                "expression": expression,
-                "result": str(result)
-            })
-            
-            return {"success": True, "data": str(result)}
+            result = eval(sanitized, SAFE_GLOBALS, {})  # noqa: S307 - sudah disanitasi
+            result_str = str(result)
+            self.create({"expression": expression, "result": result_str})
+            return {"success": True, "data": result_str}
         except ZeroDivisionError:
-            return {"success": False, "error": "Tidak bisa dibagi nol!"}
-        except Exception:
-            return {"success": False, "error": "Format perhitungan salah!"}
+            return {"success": False, "error": "Tidak bisa dibagi nol"}
+        except Exception:  # noqa: BLE001
+            return {"success": False, "error": "Format perhitungan salah"}
+
+    def get_history(self, limit: int = 20) -> Dict:
+        """Ambil riwayat perhitungan.
+
+        Args:
+            limit (int): Jumlah riwayat.
+
+        Returns:
+            Dict: Hasil operasi.
+        """
+        return self.get_all(limit) 

@@ -1,1 +1,25 @@
-halo
+#:import dp kivy.metrics.dp
+
+<NoteDetailScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Detail Catatan"
+            left_action_items: [["arrow-left", lambda x: app.go_back()]]
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: dp(16)
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    id: note_title
+                    font_style: "H5"
+
+                MDLabel:
+                    id: note_content
+                    font_style: "Body1" 

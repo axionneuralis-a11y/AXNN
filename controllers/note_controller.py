@@ -1,41 +1,75 @@
-# controllers/note_controller.py
+"""Controller catatan (F001)."""
+
+from typing import Dict
+
 from controllers.base_controller import BaseController
 from models.note_model import NoteModel
 
+MAX_TITLE_LENGTH: int = 200
+MAX_CONTENT_LENGTH: int = 10000
+
+
 class NoteController(BaseController):
-    def __init__(self):
+    """Logika bisnis CRUD catatan."""
+
+    def __init__(self) -> None:
+        """Ikatkan ke NoteModel."""
         super().__init__(NoteModel)
-        
-    def get_recent_notes(self, limit: int = 3):
-        try: return {"success": True, "data": self.model.get_recent(limit)}
-        except Exception as e: return {"success": False, "error": str(e)}
 
-# controllers/todo_controller.py
-from controllers.base_controller import BaseController
-from models.todo_model import TodoModel
+    def create_note(self, title: str, content: str, folder_id: int = 1) -> Dict:
+        """Buat catatan baru dengan validasi.
 
-class TodoController(BaseController):
-    def __init__(self):
-        super().__init__(TodoModel)
-        
-    def toggle_todo_status(self, todo_id: int, is_done: int):
+        Args:
+            title (str): Judul catatan.
+            content (str): Isi catatan.
+            folder_id (int): Folder tujuan.
+
+        Returns:
+            Dict: Hasil operasi.
+        """
+        title = title.strip()
+        if not title:
+            return {"success": False, "error": "Judul tidak boleh kosong"}
+        if len(title) > MAX_TITLE_LENGTH:
+            return {
+                "success": False,
+                "error": f"Judul maksimal {MAX_TITLE_LENGTH} karakter",
+            }
+        if len(content) > MAX_CONTENT_LENGTH:
+            return {
+                "success": False,
+                "error": f"Isi maksimal {MAX_CONTENT_LENGTH} karakter",
+            }
+
+        data = {"title": title, "content": content, "folder_id": folder_id}
+        return self.create(data)
+
+    def get_recent_notes(self, limit: int = 3) -> Dict:
+        """Ambil catatan terbaru untuk Home.
+
+        Args:
+            limit (int): Jumlah catatan.
+
+        Returns:
+            Dict: Hasil operasi.
+        """
         try:
-            if self.model.toggle_done(todo_id, is_done):
-                return {"success": True, "data": {"id": todo_id, "is_done": is_done}}
-            return {"success": False, "error": "Gagal update status"}
-        except Exception as e: return {"success": False, "error": str(e)}
+            result = self.model.get_recent(limit)
+            return {"success": True, "data": result}
+        except Exception as exc:  # noqa: BLE001
+            return {"success": False, "error": str(exc)}
 
-# controllers/folder_controller.py
-from controllers.base_controller import BaseController
-from models.folder_model import FolderModel
+    def get_notes_by_folder(self, folder_id: int) -> Dict:
+        """Ambil catatan per folder (F003 filter).
 
-class FolderController(BaseController):
-    def __init__(self):
-        super().__init__(FolderModel)
-        
-    def get_default_folder(self):
+        Args:
+            folder_id (int): ID folder.
+
+        Returns:
+            Dict: Hasil operasi.
+        """
         try:
-            result = self.model.get_default_folder()
-            if result: return {"success": True, "data": result}
-            return {"success": False, "error": "Folder default tidak ditemukan"}
-        except Exception as e: return {"success": False, "error": str(e)} 
+            result = self.model.get_by_folder(folder_id)
+            return {"success": True, "data": result}
+        except Exception as exc:  # noqa: BLE001
+            return {"success": False, "error": str(exc)}

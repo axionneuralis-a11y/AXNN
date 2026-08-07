@@ -28,3 +28,8 @@ class CalculatorModel(BaseModel):
             return False
         finally:
             conn.close() 
+from typing import List, Dict
+from models.base_model import BaseModel
+
+class CalculatorModel(BaseModel):
+    table_name = 'calc_history'

@@ -1,39 +1,31 @@
-from models.base_model import BaseModel
-from typing import List, Dict, Any
-from utils.database import get_db_connection
+"""Model daftar tugas (tabel todos)."""
 
-class TodoModel(BaseModel):
-    table_name = 'todos'
+from typing import Dict, List
 
-    @classmethod
-    def get_recent(cls, limit: int = 3) -> List[Dict[str, Any]]:
-        """F002: Ambil todo terbaru untuk Home Screen."""
-        query = f"SELECT * FROM {cls.table_name} ORDER BY updated_at DESC LIMIT ?"
-        conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query, (limit,))
-            return [dict(row) for row in cursor.fetchall()]
-        finally:
-            conn.close()
-            
-    @classmethod
-    def toggle_done(cls, todo_id: int, is_done: int) -> bool:
-        """F002: Tandai todo selesai atau belum."""
-        return cls.update(todo_id, {"is_done": is_done}) 
-from typing import List, Dict
 from models.base_model import BaseModel
 from utils.database import get_db_connection
 
+
 class TodoModel(BaseModel):
-    table_name = 'todos'
+    """Akses data tugas."""
+
+    table_name: str = "todos"
 
     @classmethod
     def get_recent(cls, limit: int = 3) -> List[Dict]:
-        """Mengambil tugas terbaru untuk Home Screen."""
-        query = f"SELECT id, task, is_done FROM {cls.table_name} ORDER BY created_at DESC LIMIT ?"
+        """Ambil tugas terbaru untuk Home.
+
+        Args:
+            limit (int): Jumlah tugas.
+
+        Returns:
+            List[Dict]: Daftar tugas terbaru.
+        """
+        query = (
+            f"SELECT id, task, is_done, created_at FROM {cls.table_name} "
+            "ORDER BY created_at DESC LIMIT ?"
+        )
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute(query, (limit,))
         rows = cursor.fetchall()
@@ -41,13 +33,64 @@ class TodoModel(BaseModel):
         return [dict(row) for row in rows]
 
     @classmethod
-    def toggle_status(cls, todo_id: int, current_status: int) -> bool:
-        """Toggle status selesai/belum selesai."""
-        new_status = 0 if current_status == 1 else 1
-        query = f"UPDATE {cls.table_name} SET is_done = ? WHERE id = ?"
+    def get_by_folder(cls, folder_id: int) -> List[Dict]:
+        """Ambil tugas dalam folder tertentu.
+
+        Args:
+            folder_id (int): ID folder.
+
+        Returns:
+            List[Dict]: Daftar tugas dalam folder.
+        """
+        query = (
+            f"SELECT * FROM {cls.table_name} WHERE folder_id = ? "
+            "ORDER BY created_at DESC"
+        )
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute(query, (new_status, todo_id))
-        conn.commit()
+        cursor.execute(query, (folder_id,))
+        rows = cursor.fetchall()
         conn.close()
-        return True
+        return [dict(row) for row in rows]
+
+    @classmethod
+    def get_by_date(cls, date_str: str) -> List[Dict]:
+        """Ambil tugas dengan due_date pada tanggal tertentu (Kalender).
+
+        Args:
+            date_str (str): Tanggal format YYYY-MM-DD.
+
+        Returns:
+            List[Dict]: Daftar tugas pada tanggal itu.
+        """
+        query = (
+            f"SELECT * FROM {cls.table_name} "
+            "WHERE date(due_date) = ? ORDER BY created_at DESC"
+        )
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (date_str,))
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+
+    @classmethod
+    def toggle_status(cls, todo_id: int) -> bool:
+        """Balik status selesai/belum selesai.
+
+        Args:
+            todo_id (int): ID tugas.
+
+        Returns:
+            bool: True jika berhasil.
+        """
+        query = (
+            f"UPDATE {cls.table_name} SET is_done = 1 - is_done WHERE id = ?"
+        )
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (todo_id,))
+        conn.commit()
+        affected = cursor.rowcount > 0
+        conn.close()
+        return affected

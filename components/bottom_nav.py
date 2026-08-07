@@ -1,47 +1,47 @@
-"""Bottom Navigation AXNN dengan 6 menu (URUTAN WAJIB — Hukum No.4)."""
-import logging
+"""Bottom navigation resmi AXNN (F011).
 
-from kivymd.uix.bottomnavigation import MDBottomNavigationBar, MDBottomNavigationItem
-from kivy.uix.screenmanager import ScreenManager
+URUTAN WAJIB (Hukum No.4): Home → Notes → List → Calc → Calendar → Settings
+"""
 
-logger = logging.getLogger(__name__)
-
-# URUTAN WAJIB — DILARANG MENGUBAH (Hukum Proyek No.4)
-NAV_ORDER = [
-    ('home', 'Home', 'home'),
-    ('notes', 'Notes', 'note'),
-    ('list', 'List', 'format-list-checks'),
-    ('calc', 'Calc', 'calculator'),
-    ('calendar', 'Calendar', 'calendar-month'),
-    ('settings', 'Settings', 'cog'),
-]
+from kivy.uix.boxlayout import BoxLayout
+from kivymd.uix.bottomnavigation import MDBottomNavigation, MDBottomNavigationItem
 
 
-class AXNNBottomNav(MDBottomNavigationBar):
-    """Bottom nav utama AXNN, terhubung dengan ScreenManager."""
+class BottomNavManager(BoxLayout):
+    """Membangun bottom nav 6 menu dengan urutan terkunci."""
 
-    def __init__(self, screen_manager: ScreenManager, **kwargs) -> None:
-        super().__init__(**kwargs)
-        self.screen_manager = screen_manager
-        self._build_items()
+    NAV_ITEMS = [
+        ("home", "home", "Home"),
+        ("notes", "note-text-outline", "Notes"),
+        ("todos", "format-list-checks", "List"),
+        ("calculator", "calculator-variant", "Calc"),
+        ("calendar", "calendar-month", "Calendar"),
+        ("settings", "cog-outline", "Settings"),
+    ]
 
-    def _build_items(self) -> None:
-        """Bangun 6 item navigasi sesuai urutan wajib."""
-        for name, label, icon in NAV_ORDER:
-            item = MDBottomNavigationItem(
-                name=name,
-                text=label,
-                icon=icon,
-                on_tab_press=lambda x, n=name: self._on_tab_select(n),
-            )
-            self.add_widget(item)
-
-    def _on_tab_select(self, screen_name: str) -> None:
-        """Pindah screen saat tab ditekan.
+    def __init__(self, screen_manager, **kwargs):
+        """Buat bottom nav terikat ke ScreenManager.
 
         Args:
-            screen_name: Nama target screen di ScreenManager.
+            screen_manager: ScreenManager utama aplikasi.
+        """
+        super().__init__(orientation="vertical", **kwargs)
+        self.screen_manager = screen_manager
+
+        self.bottom_nav = MDBottomNavigation()
+        for name, icon, label in self.NAV_ITEMS:
+            item = MDBottomNavigationItem(
+                name=name, text=label, icon=icon,
+                on_release=lambda x, n=name: self.switch(n),
+            )
+            self.bottom_nav.add_widget(item)
+
+        self.add_widget(self.bottom_nav)
+
+    def switch(self, screen_name: str) -> None:
+        """Pindah layar sesuai nama menu.
+
+        Args:
+            screen_name (str): Nama screen tujuan.
         """
         self.screen_manager.current = screen_name
-        self.screen_manager.transition.direction = 'left'
-        logger.info("Navigasi ke: %s", screen_name) 

@@ -1,53 +1,49 @@
-"""Controller tema — menghubungkan ThemeManager dengan SettingsModel."""
-import logging
-from typing import Dict, Any
+"""Controller pengaturan tema + simpan ke tabel settings."""
 
+from typing import Dict
+
+from controllers.base_controller import BaseController
+from models.setting_model import SettingModel
 from utils.theme import ThemeManager
-from controllers.settings_controller import SettingsController
-
-logger = logging.getLogger(__name__)
 
 
-class ThemeController:
-    """Mengelola pergantian tema dan persistensi otomatis."""
+class ThemeController(BaseController):
+    """Mengelola tema aktif dan persistensinya."""
+
+    THEME_KEY: str = "app_theme"
 
     def __init__(self) -> None:
+        """Siapkan ThemeManager dan model settings."""
+        super().__init__(SettingModel)
         self.theme_manager = ThemeManager()
-        self.settings_ctrl = SettingsController()
 
-    def load_saved_theme(self) -> Dict[str, Any]:
-        """Muat tema tersimpan saat aplikasi dibuka.
+    def load_saved_theme(self) -> Dict:
+        """Muat tema tersimpan dari DB, fallback ke default.
 
         Returns:
-            dict: {'success': bool, 'data': {'theme': str}}
+            Dict: Hasil operasi + nama tema aktif.
         """
-        result = self.settings_ctrl.get_theme()
-        if result['success']:
-            theme_name = result['data']['theme']
+        try:
+            value = self.model.get_value(self.THEME_KEY)
+            theme_name = value or ThemeManager.DEFAULT_THEME
             self.theme_manager.apply_theme(theme_name)
-            return {"success": True, "data": {"theme": theme_name}}
+            return {"success": True, "data": self.theme_manager.current_theme}
+        except Exception as exc:  # noqa: BLE001
+            return {"success": False, "error": str(exc)}
 
-        # Fallback default jika gagal baca
-        self.theme_manager.apply_theme('light')
-        return {"success": True, "data": {"theme": 'light'}}
-
-    def switch_theme(self, theme_name: str) -> Dict[str, Any]:
-        """Ganti tema + simpan otomatis ke pengaturan.
+    def set_theme(self, theme_name: str) -> Dict:
+        """Ganti tema dan simpan ke DB.
 
         Args:
-            theme_name: Nama tema tujuan.
+            theme_name (str): Nama tema baru.
 
         Returns:
-            dict: Hasil operasi sesuai standar error handling Bab 2.7.
+            Dict: Hasil operasi.
         """
-        save_result = self.settings_ctrl.set_theme(theme_name)
-        if not save_result['success']:
-            return save_result
-
-        self.theme_manager.apply_theme(theme_name)
-        logger.info("Tema diganti ke: %s", theme_name)
-        return {"success": True, "data": {"theme": theme_name}}
-
-    def get_current_theme(self) -> str:
-        """Ambil nama tema yang sedang aktif."""
-        return self.theme_manager.current_theme
+        try:
+            if not self.theme_manager.apply_theme(theme_name):
+                return {"success": False, "error": "Tema tidak dikenal"}
+            self.model.set_value(self.THEME_KEY, theme_name)
+            return {"success": True, "data": theme_name}
+        except Exception as exc:  # noqa: BLE001
+            return {"success": False, "error": str(exc)}

@@ -1,7 +1,7 @@
 {
-  "name": "NoteMint - File Manager",
-  "short_name": "NoteMint",
-  "description": "Aplikasi catatan dan file manager sederhana dengan tampilan modern",
+  "name": "AXN Note",
+  "short_name": "AXN Note",
+  "description": "Aplikasi catatan sederhana dengan tampilan modern",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
@@ -36,14 +36,14 @@
       "sizes": "1080x1920",
       "type": "image/svg+xml",
       "form_factor": "narrow",
-      "label": "Tampilan Home NoteMint"
+      "label": "Tampilan Home AXN Note"
     },
     {
       "src": "/screenshot-2.svg",
       "sizes": "1080x1920",
       "type": "image/svg+xml",
       "form_factor": "narrow",
-      "label": "Tampilan Settings NoteMint"
+      "label": "Tampilan Settings AXN Note"
     }
   ],
   "shortcuts": [

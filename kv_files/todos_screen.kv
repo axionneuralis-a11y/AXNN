@@ -1,15 +1,17 @@
-<<TodosScreen>:
+#:import dp kivy.metrics.dp
+
+<TodosScreen>:
     MDBoxLayout:
-        orientation: 'vertical'
-        
-        MDToolbar:
+        orientation: "vertical"
+
+        MDTopAppBar:
             title: "Daftar Tugas"
-            right_action_items: [['plus', lambda x: root.show_add_dialog()]]
-            
+            right_action_items: [["plus", lambda x: app.show_add_todo()]]
+
         ScrollView:
             MDBoxLayout:
-                id: todo_container
-                orientation: 'vertical'
+                id: todos_container
+                orientation: "vertical"
                 padding: dp(16)
                 spacing: dp(8)
                 size_hint_y: None

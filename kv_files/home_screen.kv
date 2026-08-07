@@ -1,18 +1,41 @@
+#:import dp kivy.metrics.dp
+
 <HomeScreen>:
-    BoxLayout:
-        orientation: 'vertical'
-        MDToolbar:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
             title: "AXNN"
-            right_action_items: [['console', lambda x: root.open_editor()]]
+            elevation: 4
+            right_action_items: [["greater-than", lambda x: app.go_to_editor()]]
+
         ScrollView:
-            MDList:
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: dp(16)
+                spacing: dp(12)
+                size_hint_y: None
+                height: self.minimum_height
+
                 MDLabel:
                     text: "Catatan Terbaru"
                     font_style: "H6"
-                # Render recent_notes via RecycleView (M2)
-        # Banner AXION Neuralis (F016) — posisi bawah Home
-        MDCard:
-            orientation: 'vertical'
-            MDLabel:
-                text: "AXION Neuralis"
-                halign: 'center' 
+
+                MDBoxLayout:
+                    id: recent_notes_container
+                    orientation: "vertical"
+                    spacing: dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                MDLabel:
+                    text: "Tugas Terbaru"
+                    font_style: "H6"
+                    padding_top: dp(12)
+
+                MDBoxLayout:
+                    id: recent_todos_container
+                    orientation: "vertical"
+                    spacing: dp(8)
+                    size_hint_y: None
+                    height: self.minimum_height

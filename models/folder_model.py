@@ -1,19 +1,45 @@
+"""Model folder (tabel folders)."""
+
+from typing import Dict, List, Optional
+
 from models.base_model import BaseModel
-from typing import Dict, Any, Optional
 from utils.database import get_db_connection
 
+
 class FolderModel(BaseModel):
-    table_name = 'folders'
+    """Akses data folder."""
+
+    table_name: str = "folders"
 
     @classmethod
-    def get_default_folder(cls) -> Optional[Dict[str, Any]]:
-        """F003: Dapatkan folder default sistem."""
-        query = f"SELECT * FROM {cls.table_name} WHERE is_default = 1 LIMIT 1"
+    def get_by_name(cls, name: str) -> Optional[Dict]:
+        """Cari folder berdasarkan nama.
+
+        Args:
+            name (str): Nama folder.
+
+        Returns:
+            Optional[Dict]: Folder jika ditemukan.
+        """
+        query = f"SELECT * FROM {cls.table_name} WHERE name = ?"
         conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query)
-            row = cursor.fetchone()
-            return dict(row) if row else None
-        finally:
-            conn.close() 
+        cursor = conn.cursor()
+        cursor.execute(query, (name,))
+        row = cursor.fetchone()
+        conn.close()
+        return dict(row) if row else None
+
+    @classmethod
+    def get_all_folders(cls) -> List[Dict]:
+        """Ambil semua folder terurut.
+
+        Returns:
+            List[Dict]: Daftar folder.
+        """
+        query = f"SELECT * FROM {cls.table_name} ORDER BY is_default DESC, name ASC"
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]

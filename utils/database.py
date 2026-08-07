@@ -1,109 +1,98 @@
-import sqlite3
+"""Manajemen koneksi dan inisialisasi database SQLite AXNN."""
+
 import os
-import logging
+import sqlite3
 from typing import Optional
 
-# Konfigurasi Logger
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+# Path database di private app storage Android
+DB_DIR: str = os.path.join(os.path.expanduser("~"), ".axnn")
+DB_PATH: str = os.path.join(DB_DIR, "axnn.db")
 
-# Path database (Private App Storage di Android, fallback ke direktori home saat dev)
-DB_DIR = os.getenv('AXNN_DB_DIR', os.path.join(os.path.expanduser('~'), '.axnn'))
-DB_NAME = 'axnn.db'
-DB_PATH = os.path.join(DB_DIR, DB_NAME)
+DEFAULT_FOLDER_NAME: str = "Umum"
+DEFAULT_FOLDER_COLOR: str = "#2196F3"
+
 
 def get_db_connection() -> sqlite3.Connection:
-    """Mendapatkan koneksi ke database SQLite dengan row_factory dict."""
+    """Membuka koneksi SQLite dengan row_factory agar hasil berupa dict.
+
+    Returns:
+        sqlite3.Connection: Koneksi database aktif.
+    """
+    os.makedirs(DB_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row  # Agar hasil query bisa diakses seperti dictionary
-    conn.execute("PRAGMA foreign_keys = ON")  # Wajib aktif untuk relasi ON DELETE
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
+
 def init_db() -> None:
-    """Inisialisasi database dan membuat semua tabel AXNN jika belum ada."""
-    os.makedirs(DB_DIR, exist_ok=True)
-    logger.info(f"[Tim B] Inisialisasi database di: {DB_PATH}")
-    
+    """Membuat semua tabel AXNN dan seed folder default.
+
+    Dipanggil sekali saat aplikasi pertama kali dibuka (main.py).
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    # Skema Tabel Wajib Sesuai Blueprint Bab 2.4
-    tables = [
+
+    cursor.executescript(
         """
         CREATE TABLE IF NOT EXISTS folders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            color TEXT DEFAULT '#2196F3',
-            is_default INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""",
-        """
+            name TEXT NOT NULL UNIQUE,
+            color TEXT NOT NULL DEFAULT '#2196F3',
+            is_default INTEGER NOT NULL DEFAULT 0
+        );
+
         CREATE TABLE IF NOT EXISTS notes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
-            content TEXT DEFAULT '',
-            folder_id INTEGER,
-            reminder_at TIMESTAMP,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE SET NULL
-        )""",
-        """
+            content TEXT NOT NULL DEFAULT '',
+            folder_id INTEGER NOT NULL DEFAULT 1,
+            reminder_at TEXT,
+            created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+            updated_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+            FOREIGN KEY (folder_id) REFERENCES folders(id)
+        );
+
         CREATE TABLE IF NOT EXISTS todos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             task TEXT NOT NULL,
-            is_done INTEGER DEFAULT 0,
-            folder_id INTEGER,
-            due_date TIMESTAMP,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE SET NULL
-        )""",
-        """
+            is_done INTEGER NOT NULL DEFAULT 0,
+            folder_id INTEGER NOT NULL DEFAULT 1,
+            due_date TEXT,
+            created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+            FOREIGN KEY (folder_id) REFERENCES folders(id)
+        );
+
         CREATE TABLE IF NOT EXISTS calc_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             expression TEXT NOT NULL,
             result TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""",
-        """
+            created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+        );
+
         CREATE TABLE IF NOT EXISTS code_files (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             filename TEXT NOT NULL,
-            language TEXT DEFAULT 'text',
-            content TEXT DEFAULT '',
-            is_saved INTEGER DEFAULT 0,
+            language TEXT NOT NULL DEFAULT 'python',
+            content TEXT NOT NULL DEFAULT '',
+            is_saved INTEGER NOT NULL DEFAULT 0,
             storage_path TEXT,
-            last_opened TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""",
-        """
+            last_opened TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+        );
+
         CREATE TABLE IF NOT EXISTS settings (
             key TEXT PRIMARY KEY,
-            value TEXT
-        )"""
-    ]
-    
-    try:
-        for table in tables:
-            cursor.execute(table)
-        
-        # Insert default folder "Umum" jika kosong
-        cursor.execute("SELECT COUNT(*) FROM folders WHERE is_default = 1")
-        if cursor.fetchone()[0] == 0:
-            cursor.execute("INSERT INTO folders (name, color, is_default) VALUES (?, ?, ?)", 
-                           ("Umum", "#2196F3", 1))
-            
-        # Insert default setting tema
-        cursor.execute("SELECT COUNT(*) FROM settings WHERE key = 'theme'")
-        if cursor.fetchone()[0] == 0:
-            cursor.execute("INSERT INTO settings (key, value) VALUES (?, ?)", 
-                           ("theme", "light"))
-                           
-        conn.commit()
-        logger.info("[Tim B] Database berhasil diinisialisasi & data default dibuat.")
-    except sqlite3.Error as e:
-        logger.error(f"Error inisialisasi database: {e}")
-        conn.rollback()
-    finally:
-        conn.close() 
+            value TEXT NOT NULL
+        );
+        """
+    )
+
+    # Seed folder default (id=1) jika belum ada
+    cursor.execute(
+        "INSERT OR IGNORE INTO folders (id, name, color, is_default) "
+        "VALUES (1, ?, ?, 1)",
+        (DEFAULT_FOLDER_NAME, DEFAULT_FOLDER_COLOR),
+    )
+
+    conn.commit()
+    conn.close()

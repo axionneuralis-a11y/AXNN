@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#1a1a2e" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>NoteMint - File Manager</title>
+    <title>AXN Note</title>
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icon.svg" />
@@ -245,7 +245,6 @@
         .btn-sm svg { width: 16px; height: 16px; }
         .btn-block { width: 100%; justify-content: center; }
 
-        /* File Manager Styles */
         .breadcrumb {
             display: flex;
             align-items: center;
@@ -362,7 +361,6 @@
         .notif-prompt .notif-text { font-size: 13px; color: var(--text-secondary); }
         .notif-prompt .notif-text strong { color: var(--text-primary); }
 
-        /* FULLSCREEN EDITOR */
         .editor-overlay {
             position: fixed;
             inset: 0;
@@ -502,7 +500,6 @@
             justify-content: center;
         }
 
-        /* MODAL */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -539,7 +536,6 @@
             justify-content: flex-end;
         }
 
-        /* Setting Row */
         .setting-row {
             display: flex;
             justify-content: space-between;
@@ -575,7 +571,6 @@
         }
         .toggle.active::after { transform: translateX(20px); }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .app-header h1 { font-size: 17px; }
             .main-content { padding: 12px 12px 80px; }
@@ -601,7 +596,6 @@
             body { max-height: none; overflow: visible; }
         }
 
-        /* Context Menu */
         .context-menu {
             position: fixed;
             background: var(--bg-card);
@@ -644,11 +638,11 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
             </svg>
-            <span>Note</span>Mint
+            <span>AXN</span> Note
         </h1>
         <div class="header-actions">
             <button id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                 </svg>
             </button>
@@ -811,7 +805,7 @@
                 </div>
             </div>
             <div class="card" style="text-align:center; color:var(--text-secondary); font-size:12px;">
-                <p>NoteMint v2.0 • Built with ❤️</p>
+                <p>AXN Note v2.0 • Built with AXION Neuralis</p>
             </div>
         </div>
     </main>
@@ -908,8 +902,8 @@
         // ================================================================
         // DATA LAYER
         // ================================================================
-        const DATA_KEY = 'notemint_v2_data';
-        const SUBSCRIPTION_KEY = 'notemint_subscription';
+        const DATA_KEY = 'axn note_v2_data';
+        const SUBSCRIPTION_KEY = 'axn note_subscription';
 
         let data = {
             folders: [],
@@ -935,6 +929,9 @@
                     if (!data.folders) data.folders = [];
                     if (!data.files) data.files = [];
                     if (!data.settings) data.settings = { theme: 'light', notifications: false };
+                    // Ensure all files/folders have 'notified' property
+                    data.folders.forEach(f => { if (f.notified === undefined) f.notified = false; });
+                    data.files.forEach(f => { if (f.notified === undefined) f.notified = false; });
                 }
             } catch (e) { console.warn('Load data error', e); }
         }
@@ -1014,7 +1011,7 @@
             updateNotifBadge();
             
             if (data.settings.notifications && Notification.permission === 'granted') {
-                sendPushNotification('🔔 Notifikasi Aktif', 'Notifikasi NoteMint sekarang aktif!');
+                sendPushNotification('🔔 Notifikasi Aktif', 'Notifikasi AXN Note sekarang aktif!');
             }
         }
 
@@ -1028,7 +1025,7 @@
                         saveData();
                         updateSettingsUI();
                         registerServiceWorker();
-                        sendPushNotification('🔔 Notifikasi Aktif', 'Notifikasi NoteMint sekarang aktif!');
+                        sendPushNotification('🔔 Notifikasi Aktif', 'Notifikasi AXN Note sekarang aktif!');
                     }
                 });
             } else {
@@ -1086,7 +1083,6 @@
 
             let html = '';
 
-            // Render folders
             folders.sort((a, b) => a.name.localeCompare(b.name));
             folders.forEach(f => {
                 const childCount = getFolders(f.id).length + getFiles(f.id).length;
@@ -1114,7 +1110,6 @@
                 `;
             });
 
-            // Render files
             files.sort((a, b) => a.name.localeCompare(b.name));
             files.forEach(f => {
                 const contentPreview = f.content ? f.content.substring(0, 50) + (f.content.length > 50 ? '...' : '') : 'Kosong';
@@ -1185,6 +1180,14 @@
             document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
             const toggle = document.getElementById('darkToggle');
             if (toggle) toggle.className = 'toggle' + (isDark ? ' active' : '');
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                if (isDark) {
+                    icon.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 6 6 0 0 1-9-9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+                } else {
+                    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+                }
+            }
         }
 
         function updateSettingsUI() {
@@ -1193,10 +1196,18 @@
         }
 
         function updateNotifBadge() {
+            // Count items that have 'notified' === false (new items since last notification)
             const count = data.files.filter(f => f.notified === false).length + 
                          data.folders.filter(f => f.notified === false).length;
             const badge = document.getElementById('notifCount');
             if (badge) badge.textContent = count;
+        }
+
+        // Mark all items as notified (called when user opens notification)
+        function markAllNotified() {
+            data.folders.forEach(f => f.notified = true);
+            data.files.forEach(f => f.notified = true);
+            saveData();
         }
 
         // ================================================================
@@ -1361,6 +1372,8 @@
         function closeModal() {
             document.getElementById('modalOverlay').classList.remove('show');
             modalCallback = null;
+            // Reset move specific handlers
+            window._moveConfirm = null;
         }
 
         function modalConfirm() {
@@ -1377,6 +1390,7 @@
             closeModal();
         }
 
+        // Keyboard events
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('show')) {
                 modalConfirm();
@@ -1397,10 +1411,14 @@
             contextType = type;
             const menu = document.getElementById('contextMenu');
             menu.style.display = 'block';
-            menu.style.left = Math.min(event.clientX, window.innerWidth - 200) + 'px';
-            menu.style.top = Math.min(event.clientY, window.innerHeight - 120) + 'px';
+            // Ensure menu stays within viewport
+            const x = Math.min(event.clientX, window.innerWidth - 200);
+            const y = Math.min(event.clientY, window.innerHeight - 120);
+            menu.style.left = x + 'px';
+            menu.style.top = y + 'px';
         }
 
+        // Close context menu on outside click
         document.addEventListener('click', (e) => {
             const menu = document.getElementById('contextMenu');
             if (menu && !menu.contains(e.target)) {
@@ -1467,7 +1485,7 @@
         }
 
         // ================================================================
-        // MOVE ITEM
+        // MOVE ITEM (Fixed)
         // ================================================================
         function moveItem() {
             const folders = data.folders.filter(f => f.id !== contextTarget);
@@ -1486,43 +1504,45 @@
             document.getElementById('modalConfirmBtn').textContent = 'Pindahkan';
             document.getElementById('modalOverlay').classList.add('show');
             
+            // Store target info
             window._moveTarget = contextTarget;
             window._moveType = contextType;
             
-            window._moveConfirm = () => {
+            // Define confirm handler
+            window._moveConfirm = function() {
                 const select = document.getElementById('moveFolderSelect');
                 if (!select) return;
                 const targetId = select.value || null;
                 
                 if (window._moveType === 'folder') {
                     const folder = getFolderById(window._moveTarget);
-                    if (folder) {
-                        if (folder.id === targetId) {
-                            alert('Tidak bisa pindahkan folder ke dirinya sendiri!');
-                            return;
-                        }
-                        let isChild = false;
-                        const checkChild = (parentId) => {
-                            const children = data.folders.filter(f => f.parentId === parentId);
-                            for (const child of children) {
-                                if (child.id === targetId) {
-                                    isChild = true;
-                                    return;
-                                }
-                                checkChild(child.id);
-                            }
-                        };
-                        if (targetId) checkChild(folder.id);
-                        if (isChild) {
-                            alert('Tidak bisa pindahkan folder ke dalam folder anaknya sendiri!');
-                            return;
-                        }
-                        
-                        folder.parentId = targetId;
-                        saveData();
-                        sendPushNotification('📂 Folder Dipindahkan', `Folder "${folder.name}" dipindahkan`);
-                        closeModal();
+                    if (!folder) return;
+                    if (folder.id === targetId) {
+                        alert('Tidak bisa pindahkan folder ke dirinya sendiri!');
+                        return;
                     }
+                    // Check if targetId is a child of the folder
+                    let isChild = false;
+                    const checkChild = (parentId) => {
+                        const children = data.folders.filter(f => f.parentId === parentId);
+                        for (const child of children) {
+                            if (child.id === targetId) {
+                                isChild = true;
+                                return;
+                            }
+                            checkChild(child.id);
+                        }
+                    };
+                    if (targetId) checkChild(folder.id);
+                    if (isChild) {
+                        alert('Tidak bisa pindahkan folder ke dalam folder anaknya sendiri!');
+                        return;
+                    }
+                    
+                    folder.parentId = targetId;
+                    saveData();
+                    sendPushNotification('📂 Folder Dipindahkan', `Folder "${folder.name}" dipindahkan`);
+                    closeModal();
                 } else if (window._moveType === 'file') {
                     const file = getFileById(window._moveTarget);
                     if (file) {
@@ -1535,6 +1555,7 @@
                 }
             };
             
+            // Override modal confirm button
             document.getElementById('modalConfirmBtn').onclick = window._moveConfirm;
         }
 
@@ -1549,12 +1570,14 @@
                         return;
                     }
                 }
-                data.folders.push({
+                const newFolder = {
                     id: getNextId(),
                     name: name,
                     parentId: currentFolderId,
-                    createdAt: new Date().toISOString()
-                });
+                    createdAt: new Date().toISOString(),
+                    notified: false
+                };
+                data.folders.push(newFolder);
                 saveData();
                 sendPushNotification('📁 Folder Baru', `Folder "${name}" telah dibuat`);
             });
@@ -1615,6 +1638,7 @@
                     file.name = name;
                     file.content = content;
                     file.updatedAt = new Date().toISOString();
+                    file.notified = false;
                     saveData();
                     sendPushNotification('✏️ File Diupdate', `"${name}" telah diperbarui`);
                 }
@@ -1626,6 +1650,7 @@
                     }
                     existing.content = content;
                     existing.updatedAt = new Date().toISOString();
+                    existing.notified = false;
                     saveData();
                     sendPushNotification('✏️ File Diupdate', `"${name}" telah diperbarui`);
                 } else {
@@ -1635,7 +1660,8 @@
                         content: content,
                         folderId: currentFolderId,
                         createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString()
+                        updatedAt: new Date().toISOString(),
+                        notified: false
                     });
                     saveData();
                     sendPushNotification('📄 File Baru', `File "${name}" telah dibuat`);
@@ -1656,13 +1682,15 @@
         // ================================================================
         function exportAllData() {
             const content = JSON.stringify(data, null, 2);
-            downloadFile(`notemint_backup_${new Date().toISOString().slice(0,10)}.json`, content);
+            downloadFile(`axn note_backup_${new Date().toISOString().slice(0,10)}.json`, content);
             sendPushNotification('💾 Backup Berhasil', 'Data berhasil diexport');
         }
 
         function importAllData() {
-            document.getElementById('fileInputAll').click();
-            document.getElementById('fileInputAll').onchange = function(e) {
+            const input = document.getElementById('fileInputAll');
+            input.value = ''; // Reset so change event fires even if same file
+            input.click();
+            input.onchange = function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
                 const reader = new FileReader();
@@ -1673,19 +1701,22 @@
                             if (confirm('⚠️ Ini akan mengganti semua data saat ini. Lanjutkan?')) {
                                 data = imported;
                                 if (!data.settings) data.settings = { theme: 'light', notifications: false };
+                                // Ensure notified property exists
+                                data.folders.forEach(f => { if (f.notified === undefined) f.notified = false; });
+                                data.files.forEach(f => { if (f.notified === undefined) f.notified = false; });
                                 saveData();
                                 alert('✅ Restore berhasil!');
                                 sendPushNotification('📥 Restore Berhasil', 'Data berhasil diimport');
                             }
                         } else {
-                            alert('❌ File tidak valid. Pastikan file adalah backup NoteMint.');
+                            alert('❌ File tidak valid. Pastikan file adalah backup AXN Note.');
                         }
                     } catch (err) { 
                         alert('❌ Gagal restore: ' + err.message);
                     }
                 };
                 reader.readAsText(file);
-                e.target.value = '';
+                input.value = '';
             };
         }
 
@@ -1714,8 +1745,8 @@
         // FEEDBACK
         // ================================================================
         function sendFeedback() {
-            const subject = encodeURIComponent('Feedback NoteMint File Manager');
-            const body = encodeURIComponent('Halo,\n\nSaya ingin memberikan feedback untuk aplikasi NoteMint File Manager:\n\n[Isi feedback di sini]\n\nTerima kasih!');
+            const subject = encodeURIComponent('Feedback AXN Note');
+            const body = encodeURIComponent('Halo,\n\nSaya ingin memberikan feedback untuk aplikasi AXN Note:\n\n[Isi feedback di sini]\n\nTerima kasih!');
             window.location.href = `mailto:azrielspace852@gmail.com?subject=${subject}&body=${body}`;
         }
 
@@ -1753,7 +1784,7 @@
                             saveData();
                             registerServiceWorker();
                             updateSettingsUI();
-                            sendPushNotification('🔔 Notifikasi Aktif', 'Selamat datang di NoteMint!');
+                            sendPushNotification('🔔 Notifikasi Aktif', 'Selamat datang di AXN Note!');
                         }
                     });
                 };
@@ -1761,7 +1792,7 @@
                 document.getElementById('notifPrompt').style.display = 'none';
                 registerServiceWorker();
                 if (data.settings.notifications) {
-                    sendPushNotification('👋 Selamat Datang', 'NoteMint File Manager siap digunakan!');
+                    sendPushNotification('👋 Selamat Datang', 'AXN Note siap digunakan!');
                 }
             } else {
                 document.getElementById('notifPrompt').style.display = 'none';
@@ -1774,9 +1805,9 @@
         updateSettingsUI();
         renderAll();
 
-        console.log('📂 NoteMint File Manager v2.0 loaded!');
+        console.log('📂 AXN Note v2.0 loaded!');
         console.log('✅ Semua bug telah diperbaiki!');
         console.log('🎨 Menggunakan SVG icons untuk tampilan lebih modern!');
     </script>
 </body>
-</html>
+    </html>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background rounded -->
+  <rect width="512" height="512" rx="80" fill="#6c5ce7"/>
+  
+  <!-- Folder icon -->
+  <g transform="translate(256, 260)">
+    <!-- Folder body -->
+    <path d="M-120,-60 L-100,-100 L20,-100 L40,-60 L120,-60 L120,60 L-120,60 Z" 
+          fill="#fdcb6e" stroke="#e1a929" stroke-width="4"/>
+    <!-- Folder tab -->
+    <path d="M-100,-100 L-80,-130 L20,-130 L20,-100" 
+          fill="#fdcb6e" stroke="#e1a929" stroke-width="4"/>
+    <!-- File inside folder -->
+    <rect x="-60" y="-40" width="80" height="60" rx="4" fill="white" stroke="#ddd" stroke-width="2"/>
+    <!-- File lines -->
+    <line x1="-50" y1="-25" x2="-10" y2="-25" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-50" y1="-10" x2="10" y2="-10" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-50" y1="5" x2="10" y2="5" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+    <!-- Plus sign -->
+    <circle cx="40" cy="-20" r="16" fill="#6c5ce7"/>
+    <line x1="34" y1="-20" x2="46" y2="-20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <line x1="40" y1="-26" x2="40" y2="-14" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,9 +1,18 @@
+#:import dp kivy.metrics.dp
+
 <NotesScreen>:
-    BoxLayout:
-        orientation: 'vertical'
-        MDToolbar:
-            title: "Notes"
-            right_action_items: [['console', lambda x: root.open_editor()]]
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Catatan"
+            right_action_items: [["plus", lambda x: app.show_add_note()]]
+
         ScrollView:
-            MDList:
-                # Render notes list via RecycleView (M2) 
+            MDBoxLayout:
+                id: notes_container
+                orientation: "vertical"
+                padding: dp(16)
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height

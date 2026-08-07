@@ -6,7 +6,8 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,json,md,txt
 version = 1.1.0
 
-requirements = python3,kivy==2.3.0,kivymd==1.2.0,plyer==2.1.0,pygments==2.18.0,jedi==0.19.1,androidstorage4kivy,cython==0.29.37
+# ✅ HAPUS jedi==0.19.1 untuk build M2
+requirements = python3,kivy==2.3.0,kivymd==1.2.0,plyer==2.1.0,pygments==2.18.0,androidstorage4kivy,cython==0.29.37
 
 orientation = portrait
 fullscreen = 0
@@ -22,6 +23,11 @@ android.permissions = WRITE_INTERNAL_STORAGE,READ_INTERNAL_STORAGE,WRITE_EXTERNA
 android.allow_backup = True
 android.use_aapt2 = True
 
-# Jika aset belum ada, komentar dulu dua baris ini agar build tidak gagal
+# ⚠️ Comment dulu jika aset belum ada
 # android.icon = assets/icon.png
 # android.presplash = assets/splash.png
+
+# ✅ PIN python-for-android ke versi stabil (Python 3.11)
+[buildozer]
+p4a.url = https://github.com/kivy/python-for-android.git
+p4a.branch = master

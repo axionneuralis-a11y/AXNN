@@ -24,3 +24,35 @@ class CalculatorController(BaseController):
             return {"success": False, "error": "Gagal menghapus riwayat"}
         except Exception as e:
             return {"success": False, "error": str(e)} 
+import re
+from typing import Dict
+from models.calculator_model import CalculatorModel
+from controllers.base_controller import BaseController
+
+class CalculatorController(BaseController):
+    def __init__(self):
+        super().__init__(CalculatorModel)
+
+    def calculate(self, expression: str) -> Dict:
+        """Menghitung operasi dasar +-×÷ dengan aman."""
+        # Sanitasi input: hanya angka, titik, dan operator dasar
+        sanitized = expression.replace('×', '*').replace('÷', '/')
+        
+        if not re.match(r'^[0-9+\-*/.() ]+$', sanitized):
+            return {"success": False, "error": "Input tidak valid!"}
+            
+        try:
+            # Eval aman untuk operasi dasar (tidak ada exec/eval kompleks)
+            result = eval(sanitized, {"__builtins__": {}}, {})
+            
+            # Simpan ke riwayat
+            self.create({
+                "expression": expression,
+                "result": str(result)
+            })
+            
+            return {"success": True, "data": str(result)}
+        except ZeroDivisionError:
+            return {"success": False, "error": "Tidak bisa dibagi nol!"}
+        except Exception:
+            return {"success": False, "error": "Format perhitungan salah!"}

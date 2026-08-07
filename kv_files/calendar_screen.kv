@@ -1,7 +1,37 @@
+#:import dp kivy.metrics.dp
+
 <CalendarScreen>:
-    BoxLayout:
-        orientation: 'vertical'
-        MDToolbar:
-            title: "Calendar"
-            right_action_items: [['console', lambda x: root.open_editor()]]
-        # Widget kalender bulanan (M2 — calendar_widget.py) 
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Kalender"
+
+        MDBoxLayout:
+            orientation: "horizontal"
+            padding: dp(12)
+            size_hint_y: None
+            height: dp(56)
+
+            MDIconButton:
+                icon: "chevron-left"
+                on_release: root.prev_month()
+
+            MDLabel:
+                id: month_label
+                text: ""
+                halign: "center"
+                font_style: "H6"
+
+            MDIconButton:
+                icon: "chevron-right"
+                on_release: root.next_month()
+
+        ScrollView:
+            MDBoxLayout:
+                id: day_detail_container
+                orientation: "vertical"
+                padding: dp(16)
+                spacing: dp(8)
+                size_hint_y: None
+                height: self.minimum_height

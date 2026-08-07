@@ -1,92 +1,65 @@
-"""Manajemen tema aplikasi AXNN.
+"""Manajer tema resmi AXNN: Light, Dark, Green Matrix (Bible Bab 10)."""
 
-Palet warna WAJIB mengikuti Bab 10 Design System.
-DILARANG menambah warna di luar palet resmi tanpa persetujuan Azriel.
-"""
-import logging
 from typing import Dict, Union
-
-from kivy.utils import get_color_from_hex
-from kivy.graphics import Color
-
-logger = logging.getLogger(__name__)
 
 
 class ThemeManager:
-    """Pengelola 3 tema resmi AXNN: light, dark, matrix."""
+    """Menyimpan palet 3 tema dan tema aktif."""
 
     THEMES: Dict[str, Dict[str, Union[str, bool]]] = {
-        'light': {
-            'background': '#FAFAFA',
-            'text_primary': '#1A1A1A',
-            'accent': '#2196F3',
-            'card_bg': '#FFFFFF',
-            'divider': '#E0E0E0',
-            'glow': False,
+        "light": {
+            "background": "#FAFAFA",
+            "text_primary": "#1A1A1A",
+            "accent": "#2196F3",
+            "card_bg": "#FFFFFF",
+            "divider": "#E0E0E0",
+            "glow": False,
         },
-        'dark': {
-            'background': '#121212',
-            'text_primary': '#F5F5F5',
-            'accent': '#64B5F6',
-            'card_bg': '#1E1E1E',
-            'divider': '#333333',
-            'glow': False,
+        "dark": {
+            "background": "#121212",
+            "text_primary": "#F5F5F5",
+            "accent": "#64B5F6",
+            "card_bg": "#1E1E1E",
+            "divider": "#333333",
+            "glow": False,
         },
-        'matrix': {
-            'background': '#000000',
-            'text_primary': '#00FF41',
-            'accent': '#39FF14',
-            'card_bg': '#0A0A0A',
-            'divider': '#003300',
-            'glow': True,
+        "matrix": {
+            "background": "#000000",
+            "text_primary": "#00FF41",
+            "accent": "#39FF14",
+            "card_bg": "#0A0A0A",
+            "divider": "#003300",
+            "glow": True,
         },
     }
 
-    VALID_THEMES = ('light', 'dark', 'matrix')
+    DEFAULT_THEME: str = "light"
 
     def __init__(self) -> None:
-        self.current_theme: str = 'light'
+        """Set tema default ke light."""
+        self.current_theme: str = self.DEFAULT_THEME
 
     def apply_theme(self, theme_name: str) -> bool:
-        """Terapkan tema ke seluruh aplikasi.
+        """Ganti tema aktif.
 
         Args:
-            theme_name: Nama tema ('light', 'dark', 'matrix').
+            theme_name (str): Nama tema (light/dark/matrix).
 
         Returns:
             bool: True jika tema valid dan diterapkan.
         """
-        if theme_name not in self.VALID_THEMES:
-            logger.warning("Tema '%s' tidak valid, fallback ke light", theme_name)
-            theme_name = 'light'
-
+        if theme_name not in self.THEMES:
+            return False
         self.current_theme = theme_name
-        logger.info("Tema diterapkan: %s", theme_name)
         return True
 
     def get_style(self, key: str) -> Union[str, bool]:
-        """Ambil nilai style berdasarkan tema aktif.
+        """Ambil satu nilai style dari tema aktif.
 
         Args:
-            key: Kunci style (background, text_primary, accent, dll).
+            key (str): Kunci style (mis. 'background').
 
         Returns:
-            Nilai style sesuai tema aktif.
+            Union[str, bool]: Nilai style.
         """
-        return self.THEMES[self.current_theme].get(key, '#000000')
-
-    def get_color(self, key: str) -> Color:
-        """Ambil warna Kivy dari kunci style.
-
-        Args:
-            key: Kunci style berupa hex color.
-
-        Returns:
-            Color: Objek warna Kivy siap pakai.
-        """
-        hex_value = str(self.get_style(key))
-        return get_color_from_hex(hex_value)
-
-    def is_glow(self) -> bool:
-        """Cek apakah tema aktif memiliki efek glow (Matrix)."""
-        return bool(self.get_style('glow')) 
+        return self.THEMES[self.current_theme].get(key, "#000000")

@@ -1,7 +1,7 @@
 // sw.js - Service Worker untuk Push Notifications
-// NoteMint File Manager v2.0 - SVG Version
+// AXN Note v2.0
 
-const CACHE_NAME = 'notemint-v2';
+const CACHE_NAME = 'axn-note-v2';
 const ASSETS = [
     '/',
     '/index.html',
@@ -82,7 +82,7 @@ self.addEventListener('fetch', (event) => {
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Offline - NoteMint</title>
+                    <title>Offline - AXN Note</title>
                     <style>
                         body {
                             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -158,8 +158,8 @@ self.addEventListener('fetch', (event) => {
 // Push Notification
 self.addEventListener('push', (event) => {
     let data = {
-        title: '📂 NoteMint',
-        body: 'Ada notifikasi baru dari aplikasi NoteMint',
+        title: 'AXN Note',
+        body: 'Ada notifikasi baru dari AXN Note',
         icon: '/icon.svg',
         badge: '/icon.svg',
         url: '/',
@@ -207,7 +207,7 @@ self.addEventListener('push', (event) => {
     };
 
     event.waitUntil(
-        self.registration.showNotification(data.title || '📂 NoteMint', options)
+        self.registration.showNotification(data.title || 'AXN Note', options)
     );
 });
 
@@ -242,7 +242,7 @@ self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
         event.waitUntil(
             self.registration.showNotification(
-                event.data.title || '📂 NoteMint',
+                event.data.title || 'AXN Note',
                 {
                     body: event.data.body || '',
                     icon: event.data.icon || '/icon.svg',
@@ -326,7 +326,7 @@ async function updateNotes() {
     } catch (e) {
         console.warn('Periodic update failed:', e);
     }
-});
+}
 
 // Handle unhandled rejections
 self.addEventListener('unhandledrejection', (event) => {

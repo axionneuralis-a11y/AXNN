@@ -1,0 +1,87 @@
+{
+  "project": "AXN Note 1.0.0",
+  "branch": "audit",
+  "gate_status": "NOT READY",
+  "source_package_entries": 37,
+  "artifacts": [
+    {
+      "id": "ARCH-001",
+      "status": "PARTIAL",
+      "target": "FROZEN",
+      "severity": "P0",
+      "blocker": true
+    },
+    {
+      "id": "DATA-001",
+      "status": "DRAFT",
+      "target": "FROZEN",
+      "severity": "P0",
+      "blocker": true
+    },
+    {
+      "id": "EDITOR-001",
+      "status": "MISSING",
+      "target": "FROZEN",
+      "severity": "P0",
+      "blocker": true
+    },
+    {
+      "id": "BACKUP-001",
+      "status": "MISSING",
+      "target": "FROZEN",
+      "severity": "P0",
+      "blocker": true
+    },
+    {
+      "id": "IMPORT-001",
+      "status": "MISSING",
+      "target": "FROZEN",
+      "severity": "P0",
+      "blocker": true
+    },
+    {
+      "id": "SECURITY-001",
+      "status": "MISSING",
+      "target": "FROZEN",
+      "severity": "P0",
+      "blocker": true
+    },
+    {
+      "id": "BUILD-001",
+      "status": "PARTIAL/RESEARCH",
+      "target": "FROZEN",
+      "severity": "P1",
+      "blocker": true
+    },
+    {
+      "id": "UI-001",
+      "status": "MISSING",
+      "target": "FROZEN",
+      "severity": "P1",
+      "blocker": true
+    },
+    {
+      "id": "DOCS-001",
+      "status": "MISSING/PARTIAL",
+      "target": "FROZEN",
+      "severity": "P1",
+      "blocker": true
+    },
+    {
+      "id": "TEST-001",
+      "status": "MISSING",
+      "target": "FROZEN",
+      "severity": "P0/P1-GATE",
+      "blocker": true
+    }
+  ],
+  "owner_decisions_required": [
+    "OD-001",
+    "OD-002",
+    "OD-003",
+    "OD-004",
+    "OD-005"
+  ],
+  "no_production_code": true,
+  "git_write": false
+}

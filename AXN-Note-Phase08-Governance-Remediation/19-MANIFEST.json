@@ -1,0 +1,29 @@
+{
+  "package": "AXN-Note-Phase08-Governance-Remediation",
+  "files": [
+    "00-PHASE08-AUDIT-RESULT.md",
+    "01-REPOSITORY-INVENTORY.md",
+    "02-AUTHORITY-MAP.md",
+    "03-P0-COMPLIANCE-MATRIX.md",
+    "04-FOUNDATION-ARTIFACT-STATUS.md",
+    "05-ARCH-001-DRAFT.md",
+    "06-DATA-001-DRAFT.md",
+    "07-EDITOR-001-DRAFT.md",
+    "08-BACKUP-001-DRAFT.md",
+    "09-IMPORT-001-DRAFT.md",
+    "10-SECURITY-001-DRAFT.md",
+    "11-BUILD-001-DRAFT.md",
+    "12-UI-001-DRAFT.md",
+    "13-DOCS-001-DRAFT.md",
+    "14-TEST-001-DRAFT.md",
+    "15-CROSS-DOCUMENT-CONSISTENCY.md",
+    "16-OWNER-DECISION-REGISTER.md",
+    "17-FOUNDATION-GATE.md",
+    "18-MACHINE-TRACE-REGISTRY.json"
+  ],
+  "status": "NOT READY",
+  "notes": [
+    "All technical specs in this remediation package are drafts unless the source repository already had a frozen artifact; none of the 10 target standalone artifacts were present as frozen files.",
+    "No production code or Git operation was performed."
+  ]
+}

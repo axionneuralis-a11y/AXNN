@@ -80,3 +80,22 @@ AXN-Note-1.0.0-FOUNDATION-REORGANIZED/
     ├── 10-BIBLE.md
     └── 11-BLUEPRINT.md
 ```
+
+## Phase 08 — Governance & Closure Readiness
+
+The following documents are the canonical closure control surface and must be read after the historical audit corpus:
+
+| Order | Source Path | Role | Status |
+|---|---|---|---|
+| 22 | `06-GOVERNANCE/01-CANONICAL-FINDINGS-REGISTRY.md` | Canonical consolidated findings registry | **ACTIVE** |
+| 23 | `06-GOVERNANCE/02-FOUNDATION-CLOSURE-PROTOCOL.md` | Foundation-to-Bible/Blueprint gate checklist | **ACTIVE / GATE NOT PASSED** |
+| 24 | `06-GOVERNANCE/03-DOCUMENT-CLASSIFICATION-REGISTRY.md` | Information classification for every corpus document | **ACTIVE** |
+| 25 | `06-GOVERNANCE/04-SOURCE-TRACEABILITY-MAP.md` | Machine-traceable source path/section map | **ACTIVE** |
+| 26 | `06-GOVERNANCE/05-REGISTRY-VERIFICATION.md` | Verification of canonical IDs and current gate state | **ACTIVE** |
+
+### Governance Interpretation
+
+Historical audit records are immutable evidence. The canonical registry is the operational source for current finding status. `Finding Status` and `Artifact Status` are independent states.
+
+The current Foundation verdict remains **BLOCKED**. No Bible/Blueprint transition is authorized until all P0/P1 gate blockers are closed/verified and all required technical artifacts are `FROZEN`.
+

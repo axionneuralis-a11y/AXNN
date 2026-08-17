@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="AXN Note">
-  <rect width="512" height="512" rx="96" fill="#6c5ce7"/>
-  <path d="M128 150c0-12 10-22 22-22h129c6 0 12 2 16 7l59 59c4 4 7 10 7 16v152c0 12-10 22-22 22H150c-12 0-22-10-22-22V150z" fill="#ffffff"/>
-  <path d="M272 128v64c0 8 6 14 14 14h64" fill="none" stroke="#6c5ce7" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M178 250h156M178 300h156M178 350h106" fill="none" stroke="#6c5ce7" stroke-width="22" stroke-linecap="round"/>
-</svg>
